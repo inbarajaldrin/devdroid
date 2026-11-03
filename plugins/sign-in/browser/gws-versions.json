@@ -1,0 +1,10 @@
+{
+  "version": "0.22.5",
+  "repository": "https://github.com/googleworkspace/cli",
+  "targets": {
+    "darwin-arm64": {"target":"aarch64-apple-darwin","sha256":"1d2a9ffd5bc9b2c2c4b48630daf082fad13d9e57d741988a2c248eed562f7dac"},
+    "darwin-x64": {"target":"x86_64-apple-darwin","sha256":"51f9bd731404d4bba26c36e2e30dd68c56dccd1f834c01252cb0b14d6a6544b2"},
+    "linux-x64": {"target":"x86_64-unknown-linux-gnu","sha256":"de78ecdbd2f1a84cca0063a7ecbc440240fc14b6ebccbb17f4646b792a8c5c1f"},
+    "linux-arm64": {"target":"aarch64-unknown-linux-gnu","sha256":"94490295d9580e1e88574e715a0a162991747d12d62f8c7b8dcc8268b6c1cea0"}
+  }
+}

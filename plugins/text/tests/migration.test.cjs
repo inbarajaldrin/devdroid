@@ -1,0 +1,54 @@
+const { test } = require('node:test');
+const assert = require('node:assert/strict');
+const fs = require('node:fs'), path = require('node:path'), os = require('node:os');
+const { convert, parseEnv } = require('../engine/lib/convert.cjs');
+const { match, stamp } = require('../engine/lib/rules.cjs');
+const { parse } = require('../scripts/text.cjs');
+const { accountDirectory } = require('../engine/lib/account.cjs');
+const { identity } = require('../engine/lib/identity.cjs');
+const { stripFrame } = require('../engine/lib/quoted.cjs');
+const { install } = require('../scripts/setup.cjs');
+const { write } = require('../engine/lib/store.cjs');
+const id='11111111-1111-4111-8111-111111111111';
+test('conversion preserves live answers, WA_INTAKE, WA_OWN, marker mode and the whole sent index',()=>{
+  const env=parseEnv('export WA_OWN="'+'0'.repeat(11)+',123456@lid"\nWA_INTAKE=jobs@g.us='+id+'\nWA_MODE=single\nWA_AGENT_TAG="[helper]"');
+  const old={groupRoutes:[{group:'team@g.us',sessionId:id,participants:['friend@lid'],trigger:{keyword:'@ai'},expiresAt:'2099-01-01T00:00:00Z'}]};
+  const result=convert(old,'mac',env,{oldMessage:{chat:'team@g.us',text:'old body',session:'plan/47',ts:1}});
+  assert.equal(result.bundle.rules.find(r=>r.chat==='team@g.us').answerMode,'answer');
+  const config={...result.config,host:'mac',homeHost:'mac'};
+  const intake=match(result.bundle,{chat:'jobs@g.us',senders:['123456:2@lid'],text:'forwarded job'},config);
+  assert.equal(intake.target.id,id);assert.equal(intake.mode,'answer');
+  assert.equal(match(result.bundle,{chat:'jobs@g.us',senders:['stranger@lid'],text:'noise'},config).kind,'none');
+  const oldReply=match(result.bundle,{chat:'unknown@g.us',senders:['0'.repeat(11)+'@s.whatsapp.net'],text:'follow up',quotedOwn:true,quotedText:'`different-session`\n\nold\n\n_22222222-2222-4222-8222-222222222222_'},config);
+  assert.equal(oldReply.target.id,'22222222-2222-4222-8222-222222222222');assert.equal(oldReply.host,'mac');
+  assert.equal(result.sent.oldMessage.status,'sent');assert.equal(result.config.agentTag,'[helper]');
+});
+test('readable session names and single-number stamps preserve the live return address and quote stripping',t=>{
+  const root=fs.mkdtempSync(path.join(os.tmpdir(),'text-name-'));t.after(()=>fs.rmSync(root,{recursive:true,force:true}));
+  const dir=path.join(root,'.claude/sessions');fs.mkdirSync(dir,{recursive:true});write(path.join(dir,'fake.json'),{name:'plan/47',sessionId:id});
+  const target={kind:'live',agent:'claude',host:'mac',id};
+  assert.equal(identity(target,{HOME:root}),'plan/47');
+  const framed=stamp(target,identity(target,{HOME:root}),'body',{mode:'single',agentTag:'[helper]'});
+  assert.ok(framed.startsWith('[helper]\n`Claude · plan/47`\n'));assert.equal(stripFrame(framed),'body');assert.doesNotMatch(framed,/_text:/);
+});
+test('account selection and voice-note options survive the same CLI used locally and remotely',t=>{
+  const root=fs.mkdtempSync(path.join(os.tmpdir(),'text-account-'));t.after(()=>fs.rmSync(root,{recursive:true,force:true}));
+  const file=path.join(root,'voice.ogg');fs.writeFileSync(file,'audio');
+  const result=parse(['send','Mom','Voice note','--plain','--confirmed','--audio',file,'--ptt','--account','us','--via','mac'],{});
+  assert.equal(result.account,'us');assert.equal(result.payload.media.ptt,true);assert.equal(result.payload.media.data,Buffer.from('audio').toString('base64'));
+  assert.equal(accountDirectory(root,'us'),path.join(root,'accounts/us'));
+  assert.throws(()=>accountDirectory(root,'../main'),{code:'INVALID_ACCOUNT'});
+  for(const cmd of ['index','status','roster'])assert.equal(parse([cmd],{}).payload.cmd,cmd);
+});
+test('install and reversible upgrade preserve link/rules/state and persist ask lookup without ASK_SCRIPT',async t=>{
+  const root=fs.mkdtempSync(path.join(os.tmpdir(),'text-upgrade-'));t.after(()=>fs.rmSync(root,{recursive:true,force:true}));
+  const home=path.join(root,'home'), ask=path.join(home,'.claude/skills/ask/scripts/ask.py');fs.mkdirSync(path.dirname(ask),{recursive:true});fs.writeFileSync(ask,'# dependency');
+  const directory=path.join(root,'runtime'),config={host:'mac',homeHost:'mac',ownerChat:'owner@lid',owners:['owner@lid'],aiPrefix:'AI: '},bundle={version:1,rules:[]};
+  const options={directory,config,bundle,env:{HOME:home},execute:async()=>({})};
+  await install(options);assert.equal(JSON.parse(fs.readFileSync(path.join(directory,'config.json'))).askScript,ask);
+  write(path.join(directory,'auth/creds.json'),{me:{id:'keep'}});write(path.join(directory,'state.json'),{keep:true});
+  const upgraded=await install({...options,upgrade:true});assert.ok(fs.existsSync(upgraded.backup));
+  assert.deepEqual(JSON.parse(fs.readFileSync(path.join(directory,'auth/creds.json'))),{me:{id:'keep'}});
+  assert.deepEqual(JSON.parse(fs.readFileSync(path.join(directory,'state.json'))),{keep:true});assert.deepEqual(JSON.parse(fs.readFileSync(path.join(directory,'rules.json'))),bundle);
+  assert.equal(fs.existsSync(path.join(directory,'runtime/skills/ask')),false);
+});

@@ -1,0 +1,19 @@
+name:
+  first_name: Example
+  last_name: Person
+  full_name: Example Person
+  preferred_name: Example
+contact:
+  email: person@example.com
+  phone: "+1 202 555 0100"
+  website: null # none in the CV
+education:
+  - school: Example University
+    start: 2025-01
+    end: {value: "2029", confirm: true, note: "expected"}
+  - school: Example College
+    start: 2021-01
+    end: 2024-12
+answers:
+  over_18: {value: "Yes", note: "age is not in the CV"}
+  referral: null

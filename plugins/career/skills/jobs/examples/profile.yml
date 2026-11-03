@@ -1,0 +1,17 @@
+# Shape for the person's resume-derived profile. Unknown facts are null.
+name:
+  first_name: null
+  last_name: null
+contact:
+  email: null
+  phone: null
+  phone_country: null # Dialling country, independent of residence; choose it explicitly.
+  website: null
+location:
+  city: null
+  country: null
+education: [] # Entries use school, degree and discipline; unknown facts remain null.
+answers: {}
+# Literal labels, including punctuation. Scalar or {value, confirm, alternatives, query}.
+# confirm: true makes a fact unavailable until the person rules on it.
+standard_answers: {}

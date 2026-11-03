@@ -1,0 +1,170 @@
+[
+  {
+    "id": "tray-icon",
+    "prompt": "How do I add a system tray icon to my Windows app?",
+    "activate": true,
+    "expect": "Read windows-docs, discover and fetch the current shell notification API documentation before recommending code, and cite the article."
+  },
+  {
+    "id": "win32-window",
+    "prompt": "What parameters does CreateWindowExW need for a child window?",
+    "activate": true,
+    "expect": "Read windows-docs, follow a header link or search result to the API reference, read its declaration, parameters and requirements, and cite it."
+  },
+  {
+    "id": "winui-binding",
+    "prompt": "Why does my WinUI 3 XAML binding stop updating after I replace the view model?",
+    "activate": true,
+    "expect": "Read windows-docs and fetch the relevant current WinUI binding and notification documentation; distinguish WinUI from WPF and cite the pages used."
+  },
+  {
+    "id": "app-sdk-deployment",
+    "prompt": "How do I deploy an unpackaged Windows App SDK app to a clean PC?",
+    "activate": true,
+    "expect": "Read windows-docs, fetch runtime deployment guidance for the app's SDK version and packaging mode, and cite it."
+  },
+  {
+    "id": "wpf-binding",
+    "prompt": "How do I share a view model between two WPF windows?",
+    "activate": true,
+    "expect": "Read windows-docs and fetch the current WPF data binding guidance before explaining the design; cite the relevant sections."
+  },
+  {
+    "id": "winforms-context-menu",
+    "prompt": "How do I attach a right-click menu to a WinForms NotifyIcon on modern .NET?",
+    "activate": true,
+    "expect": "Read windows-docs, fetch the type and relevant member pages for the target .NET version, and check sample members against current API availability before citing them."
+  },
+  {
+    "id": "system-winrt",
+    "prompt": "Can I use Windows Runtime notifications from a desktop C++ app?",
+    "activate": true,
+    "expect": "Read windows-docs, fetch the system WinRT API and desktop applicability guidance, check Windows and SDK requirements, and cite them."
+  },
+  {
+    "id": "uwp-migration",
+    "prompt": "What changes when I migrate my UWP controls to WinUI 3?",
+    "activate": true,
+    "expect": "Read windows-docs and fetch current migration guidance and relevant Windows.UI versus Microsoft.UI API references; cite the differences."
+  },
+  {
+    "id": "dotnet-deployment",
+    "prompt": "How do I publish my C# Windows command-line tool as a single executable?",
+    "activate": true,
+    "expect": "Read windows-docs, fetch .NET publishing guidance for the target runtime and deployment mode, and cite its limitations."
+  },
+  {
+    "id": "msvc-toolset",
+    "prompt": "How do I enable C++20 in an MSVC project?",
+    "activate": true,
+    "expect": "Read windows-docs and fetch compiler option and language support pages for the selected toolset rather than assuming the default moniker is the target."
+  },
+  {
+    "id": "powershell-scripting",
+    "prompt": "How do I find which PowerShell module provides a command?",
+    "activate": true,
+    "expect": "Read windows-docs and fetch cmdlet documentation before choosing a command and parameters; cite the relevant version."
+  },
+  {
+    "id": "explicit-older-view",
+    "prompt": "Will this Get-Command parameter work in Windows PowerShell 5.1?",
+    "activate": true,
+    "expect": "Read windows-docs, fetch the PowerShell 5.1 view, preserve view while requesting Markdown, and confirm the selected moniker and parameter documentation even if canonicalUrl names a newer default."
+  },
+  {
+    "id": "msix-packaging",
+    "prompt": "How do I package my desktop app as MSIX?",
+    "activate": true,
+    "expect": "Read windows-docs, follow the MSIX hub to current packaging and distribution requirements, and cite the pages read."
+  },
+  {
+    "id": "winget-manifest",
+    "prompt": "What does my winget manifest need for a portable executable?",
+    "activate": true,
+    "expect": "Read windows-docs and fetch current manifest and portable installer documentation before describing fields or submission requirements."
+  },
+  {
+    "id": "exe-signing",
+    "prompt": "How do I sign this exe so Windows can verify its publisher?",
+    "activate": true,
+    "expect": "Read windows-docs, fetch Windows code signing guidance and relevant signing tool documentation, and cite the requirements without promising reputation outcomes."
+  },
+  {
+    "id": "wsl-interop",
+    "prompt": "How can a script in WSL invoke a Windows executable and pass it a file path?",
+    "activate": true,
+    "expect": "Read windows-docs and fetch WSL interoperability and path conversion guidance before giving commands; cite it."
+  },
+  {
+    "id": "driver-build",
+    "prompt": "How do I set up Visual Studio to build a KMDF driver?",
+    "activate": true,
+    "expect": "Read windows-docs and fetch current WDK, SDK and Visual Studio compatibility and setup guidance; cite the requirements."
+  },
+  {
+    "id": "msbuild-target",
+    "prompt": "How do I run an MSBuild target after my Windows desktop app is built?",
+    "activate": true,
+    "expect": "Read windows-docs and fetch current MSBuild target ordering and extension guidance before writing the project fragment."
+  },
+  {
+    "id": "release-notes",
+    "prompt": "What changed in the newest Windows App SDK release that could break my app?",
+    "activate": true,
+    "expect": "Read windows-docs, fetch the release channels hub and follow its published release link, read the applicable notes and distinguish stable, preview and experimental sections; do not guess the latest version."
+  },
+  {
+    "id": "windows-sdk-changes",
+    "prompt": "What is new in the Windows SDK, and which Windows builds support those APIs?",
+    "activate": true,
+    "expect": "Read windows-docs, fetch the current Windows SDK notes and relevant API availability sections, and cite the build-specific evidence."
+  },
+  {
+    "id": "platform-port",
+    "prompt": "What is the Windows equivalent of a macOS menu bar status item for an app I am porting?",
+    "activate": true,
+    "expect": "Read windows-docs and fetch the relevant Windows shell documentation even though no Windows API was named."
+  },
+  {
+    "id": "consumer-wallpaper",
+    "prompt": "How do I change my Windows desktop wallpaper?",
+    "activate": false,
+    "expect": "Do not select a developer documentation skill solely because Windows is mentioned."
+  },
+  {
+    "id": "consumer-purchase",
+    "prompt": "Which Windows laptop should I buy for watching movies?",
+    "activate": false,
+    "expect": "Do not select windows-docs for a consumer purchase question."
+  },
+  {
+    "id": "azure-sdk",
+    "prompt": "How do I upload a blob with the Azure Storage C# SDK?",
+    "activate": false,
+    "expect": "Use the appropriate Azure source; windows-docs excludes Azure even when C# is mentioned."
+  },
+  {
+    "id": "graph-api",
+    "prompt": "How do I read a user's calendar with Microsoft Graph?",
+    "activate": false,
+    "expect": "Use the appropriate Graph source; sharing the Microsoft Learn domain is insufficient for activation."
+  },
+  {
+    "id": "microsoft365-addin",
+    "prompt": "How do I register a Microsoft 365 Outlook add-in?",
+    "activate": false,
+    "expect": "Do not select windows-docs for Microsoft 365 development."
+  },
+  {
+    "id": "unrelated-web",
+    "prompt": "How do I center a div with CSS?",
+    "activate": false,
+    "expect": "Do not select windows-docs for unrelated web development."
+  },
+  {
+    "id": "apple-ui",
+    "prompt": "How do I share state between two SwiftUI views?",
+    "activate": false,
+    "expect": "Use the appropriate Apple documentation source; do not select windows-docs."
+  }
+]

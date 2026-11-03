@@ -1,0 +1,18 @@
+{
+  "name": "session-tools",
+  "version": "0.1.0",
+  "description": "Agents working together: message any Claude Code session or Codex thread, delegate work or ask for a review, search past sessions, fork one, and hand work over.",
+  "author": {
+    "name": "Aldrin Inbaraj"
+  },
+  "license": "Apache-2.0",
+  "homepage": "https://github.com/inbarajaldrin/devdroid",
+  "repository": "https://github.com/inbarajaldrin/devdroid",
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "session-tools",
+    "shortDescription": "Agents working together",
+    "developerName": "Aldrin Inbaraj",
+    "category": "Developer Tools"
+  }
+}

@@ -1,0 +1,2 @@
+Authentication identity verification includes adapted logic from OpenCLI 2.0.2,
+https://github.com/jackwener/OpenCLI (Apache-2.0). See LICENSE.

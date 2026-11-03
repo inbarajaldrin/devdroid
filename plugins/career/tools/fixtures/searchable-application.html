@@ -1,0 +1,168 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Example Company application</title>
+<style>
+body { font:16px system-ui; max-width:620px; margin:24px auto; }
+label { display:block; margin-top:12px; }
+.select-shell { position:relative; margin-bottom:12px; }
+.select__control { border:1px solid #777; padding:10px; min-height:24px; cursor:pointer; }
+.select__input { width:4px; min-width:2px; }
+.select__menu { border:1px solid #777; padding:8px; background:white; }
+[role=option] { padding:8px; cursor:pointer; }
+.validity-proxy { opacity:0; position:absolute; width:1px; height:1px; }
+.visually-hidden { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(1px,1px,1px,1px); }
+.iti__country-container { display:none; }
+.select__clear-indicator { float:right; cursor:pointer; }
+</style>
+<h1>Test engineer at Example Company</h1>
+<form id="application-form" aria-label="Application" onsubmit="event.preventDefault();window.unexpectedSubmits++">
+  <label for="first_name">First Name<span aria-hidden="true">*</span></label>
+  <input id="first_name" aria-label="First Name" aria-required="true" autocomplete="given-name">
+  <label for="email">Email<span aria-hidden="true">*</span></label>
+  <input id="email" type="email" aria-label="Email" aria-required="true">
+  <fieldset class="phone-input">
+    <legend class="visually-hidden">Phone</legend>
+    <div class="phone-input__country"><div class="select" data-choice="country"></div></div>
+    <div class="phone-input__phone">
+      <label for="phone">Phone</label>
+      <div class="iti">
+        <div class="iti__country-container">
+          <button type="button" class="iti__selected-country" aria-label="Select country">Choose</button>
+          <div class="iti__dropdown-content iti__hide" role="dialog" aria-modal="true">
+            <input id="iti-0__search-input" class="iti__search-input" type="search" placeholder="Search" role="combobox" aria-label="Search">
+            <ul id="iti-0__country-listbox" role="listbox"><li role="option">Internal duplicate</li></ul>
+          </div>
+        </div>
+        <input id="phone" class="iti__tel-input" type="tel" aria-label="Phone">
+      </div>
+    </div>
+  </fieldset>
+  <div role="group" aria-labelledby="upload-label-resume" aria-required="true" class="file-upload">
+    <div id="upload-label-resume" class="label upload-label">Resume/CV<span class="required">*</span></div>
+    <div class="file-upload__wrapper"><div class="button-container">
+      <div class="secondary-button"><div>
+        <button type="button" class="btn btn--pill">Attach</button><label class="visually-hidden" for="resume">Attach</label>
+        <input id="resume" class="visually-hidden" type="file" accept=".pdf,.doc,.docx,.txt,.rtf">
+      </div></div>
+      <div class="secondary-button"><button type="button" class="btn btn--pill" data-testid="resume-dropbox">Dropbox</button></div>
+      <div class="secondary-button"><button type="button" class="btn btn--pill">Google Drive</button></div>
+      <div class="secondary-button"><div>
+        <button type="button" class="btn btn--pill" data-testid="resume-text">Enter manually</button><label class="visually-hidden" for="resume_text">Enter manually</label>
+        <textarea id="resume_text" style="display:none"></textarea>
+      </div></div>
+      <p class="file-upload__filetypes">Accepted file types: pdf, doc, docx, txt, rtf</p>
+    </div></div>
+  </div>
+  <div role="group" aria-labelledby="upload-label-cover" aria-required="false" class="file-upload">
+    <div id="upload-label-cover" class="label upload-label">Cover letter</div>
+    <div class="file-upload__wrapper"><div class="button-container">
+      <div class="secondary-button"><div>
+        <button type="button" class="btn btn--pill">Attach</button><label class="visually-hidden" for="cover">Attach</label>
+        <input id="cover" class="visually-hidden" type="file" accept=".pdf,.doc,.docx,.txt,.rtf">
+      </div></div>
+      <div class="secondary-button"><button type="button" class="btn btn--pill">Dropbox</button></div>
+      <div class="secondary-button"><button type="button" class="btn btn--pill">Google Drive</button></div>
+      <div class="secondary-button"><div>
+        <button type="button" class="btn btn--pill" data-testid="cover-text">Enter manually</button><label class="visually-hidden" for="cover_text">Enter manually</label>
+        <textarea id="cover_text" style="display:none"></textarea>
+      </div></div>
+    </div></div>
+  </div>
+  <div class="education--form">
+    <div class="education--header"><p>Education</p></div>
+    <div class="select" data-choice="school--0"></div>
+    <div class="select" data-choice="degree--0"></div>
+    <div class="select" data-choice="discipline--0"></div>
+    <button type="button">Add another</button>
+  </div>
+  <label for="portfolio">Personal Website or Portfolio</label><input id="portfolio" aria-label="Personal Website or Portfolio">
+  <label for="linkedin">LinkedIn Profile</label><input id="linkedin" aria-label="LinkedIn Profile">
+  <fieldset><legend>Which offices are you willing to work in? *</legend>
+    <label><input type="checkbox" name="question_1000[]" id="office-north" value="1001" required>Northport, ZZ</label>
+    <label><input type="checkbox" name="question_1000[]" id="office-east" value="1002" required>Eastfield, ZZ</label>
+  </fieldset>
+  <div role="group" aria-labelledby="upload-label-extra" aria-required="false" class="file-upload">
+    <div id="upload-label-extra">Optional supporting document</div>
+    <button type="button">Attach</button><label class="visually-hidden" for="extra">Attach</label>
+    <input id="extra" class="visually-hidden" type="file" accept=".pdf">
+  </div>
+  <label for="motivation">Why this role?<span aria-hidden="true">*</span></label>
+  <textarea id="motivation" aria-label="Why this role?" aria-required="true"></textarea>
+  <textarea id="g-recaptcha-response-100" name="g-recaptcha-response" style="display:none"></textarea>
+  <button type="submit">Submit application</button>
+</form>
+<script>
+window.unexpectedSubmits=0; window.freeEntryAttempts=0; window.choiceClicks=[]; window.uploadAlternatives=[];
+document.addEventListener('click',event=>{const button=event.target.closest('.file-upload button');if(button && button.getAttribute('aria-label')!=='Remove file')window.uploadAlternatives.push(button.textContent);});
+</script>
+<script id="upload-widget-fixture">
+// The attached view keeps the group and replaces its input/buttons with filename and Remove.
+for (const group of document.querySelectorAll('.file-upload')) {
+  const wrapper=group.querySelector('.file-upload__wrapper');
+  if (!wrapper) continue;
+  const empty=wrapper.innerHTML;
+  const bind=()=>group.querySelector('input[type=file]').onchange=event=>{
+    const file=event.target.files[0];if(!file)return;
+    wrapper.innerHTML='<div class="file-upload__progressbar" role="progressbar" aria-valuenow="50"></div>';
+    window.finishUpload=()=>{
+      wrapper.innerHTML='<div class="file-upload__filename"><p></p><button type="button" aria-label="Remove file">Remove file</button></div>';
+      wrapper.querySelector('p').textContent=file.name;
+      wrapper.querySelector('button').onclick=()=>{wrapper.innerHTML=empty;bind();};
+    };
+    if (!window.holdUpload) setTimeout(window.finishUpload,80);
+  };
+  bind();
+}
+</script>
+<script>
+document.querySelector('button[type=submit]').addEventListener('click',()=>window.unexpectedSubmits++);
+window.choiceData={
+  country:{label:'Country',required:false,items:[['Fictionland +999','zz'],['Northland +999','zy'],['Elsewhere +998','zx']]},
+  'school--0':{label:'School',required:true,items:[['Example Institute'],['Example University'],['Example College']],paginated:true},
+  'degree--0':{label:'Degree',required:true,items:[['Associate degree'],['Bachelor degree'],['Doctoral degree']]},
+  'discipline--0':{label:'Discipline',required:true,items:[['Software systems'],['Mechanical systems'],['Applied mathematics']]}
+};
+for (const holder of document.querySelectorAll('[data-choice]')) {
+  const id=holder.dataset.choice, data=choiceData[id];
+  holder.innerHTML=`<label id="${id}-label" for="${id}" class="select__label">${data.label}${data.required?'<span aria-hidden="true">*</span>':''}</label>
+    <div class="select-shell"><div class="select__control"><div class="select__value-container">
+      <div class="select__placeholder" id="react-select-${id}-placeholder">Select...</div>
+      <div class="select__input-container"><input id="${id}" class="select__input" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-labelledby="${id}-label" aria-required="${data.required}" aria-describedby="react-select-${id}-placeholder" autocomplete="off"></div>
+    </div></div>${data.required?'<input class="validity-proxy" required tabindex="-1" aria-hidden="true">':''}</div>`;
+  const input=document.getElementById(id), shell=holder.querySelector('.select-shell'), control=shell.querySelector('.select__control');
+  let loaded=2;
+  const close=()=>{shell.querySelector('.select__menu')?.remove();input.setAttribute('aria-expanded','false');input.removeAttribute('aria-controls');};
+  const paint=()=>{
+    const list=shell.querySelector('[role=listbox]');if(!list)return;
+    list.replaceChildren();
+    for (const [index,item] of data.items.slice(0,data.paginated?loaded:undefined).entries()) {
+      const option=document.createElement('div');option.id=`react-select-${id}-option-${index}`;option.setAttribute('role','option');
+      option.innerHTML=(item[1]?`<div class="iti__flag iti__${item[1]}"></div>`:'')+item[0];
+      option.onclick=e=>{
+        e.stopPropagation();window.choiceClicks.push([id,item[0]]);
+        shell.querySelector('.select__single-value')?.remove();shell.querySelector('.select__clear-indicator')?.remove();
+        const selected=document.createElement('div');selected.className='select__single-value';
+        selected.innerHTML=item[1]?`<div class="iti__flag iti__${item[1]}"></div><span>${item[0].match(/\+\d+$/)?.[0] || ''}</span>`:item[0];
+        shell.querySelector('.select__value-container').prepend(selected);input.value='';input.style.opacity='0';
+        const proxy=shell.querySelector('.validity-proxy');if(proxy)proxy.value=item[0];
+        const clear=document.createElement('div');clear.className='select__clear-indicator';clear.textContent='Clear';
+        clear.onclick=e=>{e.stopPropagation();selected.remove();clear.remove();if(proxy)proxy.value='';input.style.opacity='1';};control.append(clear);close();
+      };list.append(option);
+    }
+  };
+  control.onclick=e=>{
+    if(input.getAttribute('aria-expanded')==='true'){close();return;}
+    input.focus();input.setAttribute('aria-expanded','true');input.setAttribute('aria-controls',`react-select-${id}-listbox`);
+    const menu=document.createElement('div');menu.className='select__menu';menu.innerHTML=`<div role="listbox" id="react-select-${id}-listbox"><div class="select__menu-notice--loading">Loading...</div></div>`;
+    shell.append(menu);setTimeout(paint,80);
+  };
+  input.addEventListener('input',()=>{window.freeEntryAttempts++;});
+  input.addEventListener('keydown',e=>{
+    if(e.key==='Escape'){close();e.preventDefault();}
+    if(e.key==='End' && data.paginated && loaded<data.items.length){
+      shell.querySelector('[role=listbox]').insertAdjacentHTML('beforeend','<div class="select__menu-notice--loading">Loading...</div>');
+      loaded=data.items.length;setTimeout(paint,80);
+    }
+  });
+}
+</script>

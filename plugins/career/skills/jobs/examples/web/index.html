@@ -1,0 +1,39 @@
+<!doctype html>
+<!-- Career: static clients use authenticated requests to their own server. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<meta name="color-scheme" content="light dark">
+<title>Career</title>
+<link rel="icon" href="favicon.ico" sizes="16x16 32x32 48x48">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" href="icon-32.png" type="image/png" sizes="32x32">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="site.webmanifest">
+<link rel="stylesheet" href="app.css">
+<script src="app.js" defer></script>
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="#/today" aria-label="Career, Today"><svg xmlns="http://www.w3.org/2000/svg" viewBox="160 160 704 704" width="22" height="22" class="brand-mark" focusable="false" aria-hidden="true"><path d="M262 582 A180 180 0 0 1 442 762" fill="none" stroke="currentColor" stroke-opacity="0.35" stroke-width="40" stroke-linecap="round"/><path d="M262 422 A340 340 0 0 1 602 762" fill="none" stroke="currentColor" stroke-opacity="0.35" stroke-width="40" stroke-linecap="round"/><path d="M262 262 A500 500 0 0 1 762 762" fill="none" stroke="currentColor" stroke-opacity="0.35" stroke-width="40" stroke-linecap="round"/><line x1="262" y1="762" x2="583.4" y2="379.0" stroke="currentColor" stroke-width="44" stroke-linecap="round"/><circle cx="262" cy="762" r="44" fill="currentColor"/><circle cx="577.2" cy="634.6" r="58" class="blip" fill="#0A66D8"/></svg><span>Career</span></a>
+  <nav class="tabs" aria-label="Sections">
+    <a href="#/today" data-tab="today" id="tab-today">Today <span class="count today-count-badge" id="tbadge" hidden></span></a>
+    <a href="#/inbox" data-tab="inbox" id="tab-inbox">Listings</a>
+    <a href="#/questions" data-tab="questions" id="tab-questions">Questions <span class="count" id="qbadge" hidden></span></a>
+    <a href="#/applied" data-tab="applied" id="tab-applied">Applied <span class="count neutral" id="abadge" hidden title="Active applications"></span></a>
+  </nav>
+  <span class="grow"></span>
+  <button type="button" class="icon-btn" id="btn-refresh" title="Refresh (r)" aria-label="Refresh"></button>
+  <button type="button" class="icon-btn" id="btn-keys" title="Keyboard shortcuts (?)" aria-label="Keyboard shortcuts"></button>
+  <a class="icon-btn" href="#/pair" id="btn-pair" title="Pairing" aria-label="Pairing"></a>
+</header>
+<main id="main" tabindex="-1"></main>
+<div id="toasts" aria-live="polite"></div>
+<dialog id="dialog" aria-labelledby="dialog-title"></dialog>
+<dialog id="viewer" class="viewer" aria-label="Image viewer"></dialog>
+<noscript><p class="noscript">This page needs JavaScript.</p></noscript>
+</body>
+</html>

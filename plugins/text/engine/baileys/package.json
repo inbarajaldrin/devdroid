@@ -1,0 +1,14 @@
+{
+  "name": "wa-baileys",
+  "version": "1.0.0",
+  "private": true,
+  "description": "WhatsApp transport dependencies for the text engine.",
+  "type": "module",
+  "dependencies": {
+    "baileys": "7.0.0-rc14",
+    "link-preview-js": "^3.2.0",
+    "pino": "^10.3.1",
+    "qrcode-terminal": "^0.12.0",
+    "sharp": "^0.35.4"
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "version": 1,
+  "rulings": {},
+  "accounts": {
+    "example": {
+      "label": "Example login (replace placeholders)",
+      "machine": {
+        "id": "0000000000000000000000000000000000000000000000000000000000000000",
+        "exclusive": false,
+        "ssh": "YOUR_PRIVATE_MACHINE_SSH_ALIAS",
+        "cli": "/ABSOLUTE/PATH/TO/.devdroid/browser/runtime/scripts/sign-in.mjs"
+      },
+      "bridge": {
+        "name": "example",
+        "profileDir": "/ABSOLUTE/PATH/TO/NEW/PROFILE",
+        "port": 19300,
+        "offscreen": true,
+        "driveBlocked": false,
+        "contextIds": []
+      },
+      "primary": "example",
+      "sites": {
+        "example": {
+          "signInUrl": "https://www.example.org/",
+          "identity": {
+            "kind": "generic",
+            "url": "https://www.example.org/",
+            "expected": {}
+          }
+        }
+      },
+      "permissions": []
+    }
+  }
+}

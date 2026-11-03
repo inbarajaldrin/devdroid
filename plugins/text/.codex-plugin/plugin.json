@@ -1,0 +1,17 @@
+{
+  "name": "text",
+  "version": "0.1.0",
+  "description": "Talk with your agents over WhatsApp: choose for each chat who answers and who may wake them, set each agent's role and the permissions it holds for the work you hand it, and give an agent temporary access to answer or work with anyone in your contacts.",
+  "license": "Apache-2.0",
+  "author": {
+    "name": "Aldrin Inbaraj"
+  },
+  "homepage": "https://github.com/inbarajaldrin/devdroid",
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "text",
+    "shortDescription": "Talk with your agents over WhatsApp",
+    "developerName": "Aldrin Inbaraj",
+    "category": "Productivity"
+  }
+}

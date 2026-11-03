@@ -1,0 +1,18 @@
+{
+  "name": "docs",
+  "version": "0.1.0",
+  "description": "Help building for Apple platforms and Windows, working from their current documentation.",
+  "author": {
+    "name": "Aldrin Inbaraj"
+  },
+  "license": "Apache-2.0",
+  "homepage": "https://github.com/inbarajaldrin/devdroid",
+  "repository": "https://github.com/inbarajaldrin/devdroid",
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "docs",
+    "shortDescription": "Help building for Apple platforms and Windows, working from their current documentation",
+    "developerName": "Aldrin Inbaraj",
+    "category": "Developer Tools"
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "coordinator": null,
+  "resume_mode": "one resume",
+  "review_min_words": 25,
+  "live_browser_writes": "Disabled",
+  "scheduled_scans": "Enabled",
+  "application_assistance": "Enabled",
+  "notifications": null,
+  "recipes": "Enabled",
+  "remote_access": "Local only",
+  "account": null,
+  "bridge_site": null,
+  "resume": null,
+  "resume_pdf": null,
+  "apple_team_id": null,
+  "bundle_id_prefix": null,
+  "phone_device": null,
+  "ota_base": null,
+  "drafter": null,
+  "reviewer": null
+}

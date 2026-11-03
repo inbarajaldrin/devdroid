@@ -1,0 +1,25 @@
+# Complete fictional feed shapes. Replace metadata with the person's targets before enabling.
+companies:
+  - name: Example Company A
+    ats: greenhouse
+    board: example-board
+    enabled: false
+  - name: Example Company B
+    ats: lever
+    board: example-board
+    enabled: false
+  - name: Example Company C
+    ats: ashby
+    board: example-board
+    enabled: false
+  - name: Example Company D
+    ats: workday
+    workday: {host: example.myworkdayjobs.com, tenant: example, site: careers}
+    sign_in_site: example-employer
+    enabled: false
+  - name: Example Company E
+    ats: custom
+    feed: {url: 'https://careers.example.org/jobs.json', items: results, title: title, link: url, location: location}
+    enabled: false
+title_filter: {}
+location_filter: {}

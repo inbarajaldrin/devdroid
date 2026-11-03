@@ -1,0 +1,11 @@
+{
+  "name": "career",
+  "version": "0.1.0",
+  "description": "Find company jobs, fill and review applications with your approval, and track your search in your own app and website.",
+  "skills": "./skills/",
+  "license": "Apache-2.0",
+  "author": {
+    "name": "Aldrin Inbaraj"
+  },
+  "homepage": "https://github.com/inbarajaldrin/devdroid"
+}

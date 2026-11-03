@@ -1,0 +1,20 @@
+{
+  "opencli": {
+    "package": "@jackwener/opencli",
+    "version": "2.0.2",
+    "integrity": "sha512-+O+S+FQikiVunP/alMG//ww9D1lpgA24+C6ifyyzI4rZVT6GEJVqaiGZWbyI2i/Hcocs4l1K6gnNt+3Yaf2wtw=="
+  },
+  "chrome": {
+    "version": "149.0.7827.22",
+    "md5": {
+      "mac-arm64": "tocRI3YSND+YCcVw+n7osw==",
+      "mac-x64": "uUPv1+5HVyg6Wo4L+lQwbQ==",
+      "linux64": "NYGmdsZaEt52DDSQnZckRg=="
+    }
+  },
+  "extension": {
+    "version": "1.0.26",
+    "url": "https://github.com/jackwener/OpenCLI/releases/download/v2.0.2/opencli-extension-v1.0.26.zip",
+    "sha256": "2b2eff46fe4a21a0b02516e743005066e6317b48f15455c1c7b07f69ad7af211"
+  }
+}

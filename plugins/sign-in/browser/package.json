@@ -1,0 +1,6 @@
+{
+  "name": "devdroid-sign-in-browser",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": { "@jackwener/opencli": "2.0.2" }
+}

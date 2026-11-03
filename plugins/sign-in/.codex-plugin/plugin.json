@@ -1,0 +1,16 @@
+{
+  "name": "sign-in",
+  "version": "0.1.0",
+  "description": "Sign in to any website once to automate work there with your agent.",
+  "author": {
+    "name": "Aldrin Inbaraj"
+  },
+  "license": "Apache-2.0",
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "sign-in",
+    "shortDescription": "Sign in to any website once to automate work there with your agent",
+    "developerName": "Aldrin Inbaraj",
+    "category": "Productivity"
+  }
+}

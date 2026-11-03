@@ -1,0 +1,12 @@
+{
+  "$schema": "https://anthropic.com/claude-code/plugin.schema.json",
+  "name": "utils",
+  "version": "0.1.0",
+  "description": "Send a file to your iPhone or iPad with AirDrop, and screenshot or record an app window in the background.",
+  "author": {
+    "name": "Aldrin Inbaraj"
+  },
+  "license": "Apache-2.0",
+  "homepage": "https://github.com/inbarajaldrin/devdroid",
+  "repository": "https://github.com/inbarajaldrin/devdroid"
+}

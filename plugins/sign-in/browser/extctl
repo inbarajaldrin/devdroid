@@ -1,0 +1,19 @@
+#!/usr/bin/env node
+const net = require('node:net');
+const [cmd, id] = process.argv.slice(2);
+if (!['list', 'state', 'invoke'].includes(cmd) || cmd === 'invoke' && !/^bridge\.[a-z][a-z0-9-]*\.(up|show|park)$/.test(id || '')) {
+  console.error('extctl list | state | invoke bridge.ACCOUNT.up|show'); process.exit(1);
+}
+const socket = net.connect({ host: '127.0.0.1', port: Number(process.env.SIGN_IN_CONTROL_PORT || 47616) }, () => socket.write(JSON.stringify({ cmd, id }) + '\n'));
+socket.setTimeout(180000, () => socket.destroy(new Error('Control surface timed out')));
+let response = '', received = false;
+socket.on('data', data => {
+  response += data;
+  if (!received && response.includes('\n')) {
+    received = true; socket.end();
+    try { const result = JSON.parse(response.split('\n')[0]); console.log(JSON.stringify(result)); if (!result.ok) process.exitCode = 1; }
+    catch { console.error('ERROR: Invalid control response'); process.exitCode = 1; }
+  }
+});
+socket.on('end', () => { if (!received) { console.error('ERROR: Control surface closed without a response'); process.exitCode = 1; } });
+socket.on('error', e => { console.error(`ERROR: ${e.message}; start node <plugin>/browser/ext-bridge.mjs serve`); process.exitCode = 1; });

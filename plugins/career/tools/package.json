@@ -1,0 +1,13 @@
+{
+  "name": "career-tools",
+  "private": true,
+  "type": "module",
+  "description": "Public company career feeds",
+  "scripts": {
+    "scan": "node scan.mjs",
+    "scan:dry": "node scan.mjs --dry-run"
+  },
+  "dependencies": {
+    "js-yaml": "^4.1.0"
+  }
+}

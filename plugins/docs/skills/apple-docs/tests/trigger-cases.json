@@ -1,0 +1,68 @@
+[
+  {
+    "id": "swiftui-state",
+    "prompt": "How do I manage shared state between two SwiftUI views?",
+    "activate": true,
+    "expect": "Read apple-docs, fetch the SwiftUI hub and relevant state/data-flow pages before choosing an API; cite those pages."
+  },
+  {
+    "id": "hig-navigation",
+    "prompt": "How should navigation differ between my iPhone and Mac app?",
+    "activate": true,
+    "expect": "Read apple-docs, fetch HIG and relevant platform/navigation guidance, and cite it."
+  },
+  {
+    "id": "release-notes",
+    "prompt": "What changed in the newest iOS SDK that could break my app?",
+    "activate": true,
+    "expect": "Read apple-docs, fetch the release-note hub and newest relevant release, distinguish beta status, and cite it without assuming a version."
+  },
+  {
+    "id": "app-review",
+    "prompt": "Will App Review allow my app to download executable code after installation?",
+    "activate": true,
+    "expect": "Read apple-docs, fetch the current numbered App Review rule and exceptions, and cite the canonical section."
+  },
+  {
+    "id": "wwdc-session",
+    "prompt": "Find a WWDC talk about Swift concurrency and explain its advice.",
+    "activate": true,
+    "expect": "Read apple-docs, discover a session through the videos hub, fetch its actual transcript, and check current API references for any current-version claims."
+  },
+  {
+    "id": "safari-conversion",
+    "prompt": "My Chrome extension needs to run in Safari. What do I change?",
+    "activate": true,
+    "expect": "Read apple-docs and the Safari guide router, then fetch Apple's current conversion and browser-compatibility documentation."
+  },
+  {
+    "id": "swiftpm-app",
+    "prompt": "How do I turn my SwiftPM executable into a signed, notarized Mac app?",
+    "activate": true,
+    "expect": "Read apple-docs and the local SwiftPM guide, inspect relevant scripts before use, and fetch current signing/distribution documentation."
+  },
+  {
+    "id": "visionos-immersive",
+    "prompt": "How do I open an immersive space with 3D content in my Vision Pro app?",
+    "activate": true,
+    "expect": "Read apple-docs, find the visionOS/RealityKit pages through the technology index or SwiftUI hub, fetch them, and cite them."
+  },
+  {
+    "id": "watchos-complication",
+    "prompt": "How do I add a complication to my Apple Watch app?",
+    "activate": true,
+    "expect": "Read apple-docs, fetch the current WidgetKit / watchOS complication documentation rather than recalling ClockKit, and cite it."
+  },
+  {
+    "id": "swift-evolution",
+    "prompt": "Is there an accepted Swift proposal for build-configuration conditionals on package dependencies?",
+    "activate": true,
+    "expect": "Read apple-docs, read the Swift Evolution index for the proposal and its status, open the proposal text, and cite its SE number."
+  },
+  {
+    "id": "consumer-question",
+    "prompt": "How do I turn down the brightness on my iPhone?",
+    "activate": false,
+    "expect": "Do not select a developer-documentation skill solely because an Apple product is mentioned."
+  }
+]

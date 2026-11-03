@@ -1,0 +1,94 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "devdroid",
+  "owner": {
+    "name": "Aldrin Inbaraj"
+  },
+  "metadata": {
+    "description": "Everyday skills for Claude Code and Codex.",
+    "version": "0.1.0"
+  },
+  "plugins": [
+    {
+      "name": "session-tools",
+      "source": "./plugins/session-tools",
+      "description": "Agents working together: message any Claude Code session or Codex thread, delegate work or ask for a review, search past sessions, fork one, and hand work over.",
+      "category": "development",
+      "tags": [
+        "session",
+        "history",
+        "agents",
+        "fork",
+        "provenance",
+        "search"
+      ],
+      "version": "0.1.0"
+    },
+    {
+      "name": "dev-tools",
+      "source": "./plugins/dev-tools",
+      "description": "Tools for building software with agents, from reviewing a change to checking it before you commit.",
+      "category": "development",
+      "tags": [
+        "development",
+        "diff-review",
+        "commit-review",
+        "detour",
+        "skill-building"
+      ],
+      "version": "0.1.0"
+    },
+    {
+      "name": "utils",
+      "source": "./plugins/utils",
+      "description": "Send a file to your iPhone or iPad with AirDrop, and screenshot or record an app window in the background.",
+      "category": "productivity",
+      "tags": [
+        "airdrop",
+        "screenshot",
+        "window-capture",
+        "recording"
+      ],
+      "version": "0.1.0"
+    },
+    {
+      "name": "docs",
+      "source": "./plugins/docs",
+      "description": "Help building for Apple platforms and Windows, working from their current documentation.",
+      "category": "documentation",
+      "tags": [
+        "docs",
+        "apple",
+        "swift",
+        "swiftui",
+        "macos",
+        "ios",
+        "windows",
+        "dotnet",
+        "live-fetch"
+      ],
+      "version": "0.1.0"
+    },
+    {
+      "name": "text",
+      "source": "./plugins/text",
+      "description": "Talk with your agents over WhatsApp: choose for each chat who answers and who may wake them, set each agent's role and the permissions it holds for the work you hand it, and give an agent temporary access to answer or work with anyone in your contacts.",
+      "category": "productivity",
+      "version": "0.1.0"
+    },
+    {
+      "name": "sign-in",
+      "source": "./plugins/sign-in",
+      "description": "Sign in to any website once to automate work there with your agent.",
+      "category": "productivity",
+      "version": "0.1.0"
+    },
+    {
+      "name": "career",
+      "source": "./plugins/career",
+      "description": "Find company jobs, fill and review applications with your approval, and track your search in your own app and website.",
+      "category": "productivity",
+      "version": "0.1.0"
+    }
+  ]
+}

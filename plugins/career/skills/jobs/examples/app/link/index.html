@@ -1,0 +1,82 @@
+<!doctype html>
+<!-- Opener for the Career phone app. serve.py answers GET /app/ with this file (no token), and
+     Tailscale Funnel publishes it (no VPN needed) at https://your-mac.your-tailnet.ts.net:8443/app/.
+     /app/?q=<question-id>  -> careerapp://questions/<question-id>
+     /app/#<question-id>    -> same (fragment form)
+     /app/                  -> careerapp://questions
+     Exists because WhatsApp on iOS only makes http(s) links tappable. Carries no data and no tokens:
+     the id is only a pointer; the app fetches the question over Tailscale with its own pairing.
+     A desktop browser (no iPhone/iPad/iPod user agent, and not an iPad that reports a Mac user agent with touch)
+     goes to the web app instead: /web/#/questions/<id>, or /web/#/questions without an id.
+     The redirect is a path on the same host, so it stays on whichever address served this page: the public
+     Funnel address (https://your-mac.your-tailnet.ts.net:8443/app/) or the tailnet-only one (port 443). -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDI0IDEwMjQiPjxzdHlsZT5AbWVkaWEgKHByZWZlcnMtY29sb3Itc2NoZW1lOiBkYXJrKXsuZntmaWxsOiMxMzE1MTh9Lm17c3Ryb2tlOiM0QTRENTJ9Lmlze3N0cm9rZTojRUNFQUU2fS5pZntmaWxsOiNFQ0VBRTZ9LmF7ZmlsbDojM0I5M0ZGfX08L3N0eWxlPjxyZWN0IGNsYXNzPSJmIiB3aWR0aD0iMTAyNCIgaGVpZ2h0PSIxMDI0IiByeD0iMjMwIiBmaWxsPSIjRjRGMkVFIi8+PHBhdGggZD0iTTI2MiA1ODIgQTE4MCAxODAgMCAwIDEgNDQyIDc2MiIgZmlsbD0ibm9uZSIgY2xhc3M9Im0iIHN0cm9rZT0iI0I5QjZBRiIgc3Ryb2tlLXdpZHRoPSI0MCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PHBhdGggZD0iTTI2MiA0MjIgQTM0MCAzNDAgMCAwIDEgNjAyIDc2MiIgZmlsbD0ibm9uZSIgY2xhc3M9Im0iIHN0cm9rZT0iI0I5QjZBRiIgc3Ryb2tlLXdpZHRoPSI0MCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PHBhdGggZD0iTTI2MiAyNjIgQTUwMCA1MDAgMCAwIDEgNzYyIDc2MiIgZmlsbD0ibm9uZSIgY2xhc3M9Im0iIHN0cm9rZT0iI0I5QjZBRiIgc3Ryb2tlLXdpZHRoPSI0MCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PGxpbmUgeDE9IjI2MiIgeTE9Ijc2MiIgeDI9IjU4My40IiB5Mj0iMzc5LjAiIGNsYXNzPSJpcyIgc3Ryb2tlPSIjMUMxRTIyIiBzdHJva2Utd2lkdGg9IjQ0IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz48Y2lyY2xlIGN4PSIyNjIiIGN5PSI3NjIiIHI9IjQ0IiBjbGFzcz0iaWYiIGZpbGw9IiMxQzFFMjIiLz48Y2lyY2xlIGN4PSI1NzcuMiIgY3k9IjYzNC42IiByPSI1OCIgY2xhc3M9ImEiIGZpbGw9IiMwQTY2RDgiLz48L3N2Zz4K">
+<title>Career</title>
+<style>
+  :root { --bg: #f5f5f7; --fg: #1d1d1f; --muted: #6e6e73; --accent: #0a66d8; --on-accent: #fff; --card: #fff; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #000; --fg: #f5f5f7; --muted: #a1a1a6; --accent: #2f8cff; --on-accent: #fff; --card: #1c1c1e; }
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; }
+  body { background: var(--bg); color: var(--fg); font: 17px/1.4 -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+         display: flex; align-items: center; justify-content: center; padding: 16px; }
+  main { width: 100%; max-width: 360px; background: var(--card); border-radius: 18px; padding: 28px 20px; text-align: center; }
+  h1 { font-size: 20px; margin: 0 0 6px; }
+  p { margin: 0 0 20px; color: var(--muted); font-size: 15px; }
+  a.btn { display: block; background: var(--accent); color: var(--on-accent); text-decoration: none; font-weight: 600;
+          padding: 14px 16px; border-radius: 12px; }
+  a.alt { display: block; margin-top: 14px; color: var(--accent); font-size: 15px; text-decoration: none; }
+  code { display: block; margin-top: 18px; font: 13px ui-monospace, Menlo, monospace; color: var(--muted);
+         overflow-wrap: anywhere; user-select: all; -webkit-user-select: all; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Career</h1>
+  <p id="msg">Opening the app…</p>
+  <a class="btn" id="open" href="careerapp://questions">Open Career</a>
+  <a class="alt" id="alt" href="/web/#/questions">Open the web app instead</a>
+  <code id="qid" hidden></code>
+</main>
+<script>
+(function () {
+  // The id may arrive as ?q=<id>, #q=<id> or #<id>. Only [a-z0-9-] ids are accepted.
+  var params = new URLSearchParams(location.search);
+  var raw = params.get("q") || "";
+  if (!raw && location.hash.length > 1) {
+    var h = decodeURIComponent(location.hash.slice(1));
+    raw = h.indexOf("q=") === 0 ? h.slice(2) : h;
+  }
+  var id = /^[A-Za-z0-9][A-Za-z0-9-]{0,119}$/.test(raw) ? raw.toLowerCase() : "";
+  var target = "careerapp://questions" + (id ? "/" + id : "");
+  var web = "/web/#/questions" + (id ? "/" + id : "");
+  document.getElementById("open").href = target;
+  document.getElementById("alt").href = web;
+  // iPadOS Safari reports a Mac user agent; touch points tell it apart from a real Mac.
+  var ua = navigator.userAgent || "";
+  var ios = /iPhone|iPad|iPod/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 0);
+  if (!ios) {
+    document.getElementById("msg").textContent = "Opening the web app\u2026";
+    location.replace(web);
+    return;
+  }
+  if (id) {
+    var el = document.getElementById("qid");
+    el.textContent = id;
+    el.hidden = false;
+  }
+  setTimeout(function () {
+    document.getElementById("msg").textContent = "If the app did not open, tap the button.";
+  }, 1500);
+  location.href = target;
+})();
+</script>
+</body>
+</html>

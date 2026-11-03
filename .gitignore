@@ -1,0 +1,40 @@
+# Local notes and working files stay out of the repo.
+.scratchpad/
+
+# Claude Code runtime state (parallel to .git/ — local tool territory)
+.claude/
+
+# Python build artifacts
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+*.egg
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Distribution
+dist/
+build/
+.tox/
+
+# Editor / OS
+.DS_Store
+*.swp
+*.swo
+.vscode/
+.idea/
+
+# Local environment
+.env
+.envrc
+.venv/
+venv/
+
+# Logs and runtime data
+*.log
+
+# Installed dependencies
+node_modules/

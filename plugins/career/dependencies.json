@@ -1,0 +1,49 @@
+{
+  "schemaVersion": 1,
+  "plugin": "career",
+  "required": [
+    {
+      "skill": "sign-in",
+      "plugin": "sign-in",
+      "entrance": "scripts/sign-in.mjs",
+      "env": "SIGN_IN_SCRIPT",
+      "fallback": ".devdroid/browser/runtime/scripts/sign-in.mjs"
+    },
+    {
+      "skill": "ask",
+      "plugin": "session-tools",
+      "marketplace": "devdroid",
+      "entrance": "skills/ask/scripts/ask.py",
+      "env": "ASK_SCRIPT",
+      "fallback": ".claude/skills/ask/scripts/ask.py"
+    },
+    {
+      "skill": "apple-docs",
+      "plugin": "docs",
+      "marketplace": "devdroid",
+      "entrance": "skills/apple-docs/SKILL.md",
+      "env": "APPLE_DOCS_SKILL",
+      "fallback": ".claude/skills/apple-docs/SKILL.md"
+    }
+  ],
+  "runtime": {
+    "python": ">=3.11",
+    "node": ">=22",
+    "pythonRequirements": "requirements.txt",
+    "nodeLockfile": "tools/package-lock.json",
+    "opencli": "=2.0.2",
+    "opencliPackage": "@jackwener/opencli",
+    "opencliProvider": "sign-in pinned runtime; use its binary and non-mutating compatibility guard"
+  },
+  "installPolicy": "Setup installs required dependencies through the stock plugin installer. WhatsApp is optional and uses /text only after the person enables it; setup never installs /text automatically.",
+  "installCommand": "python3 tools/dependencies.py --marketplace <registered-catalog>",
+  "optional": [
+    {
+      "skill": "text",
+      "plugin": "text",
+      "entrance": "scripts/text.cjs",
+      "env": "TEXT_SCRIPT",
+      "fallback": ".devdroid/text/runtime/scripts/text.cjs"
+    }
+  ]
+}

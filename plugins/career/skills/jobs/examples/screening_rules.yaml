@@ -1,0 +1,15 @@
+# Structure only: no Yes/No defaults, no inferred personal values.
+# Specific rules precede general ones. Each label is checked verbatim in the person's profile.
+rules:
+  - match: [preferred, location]
+    profile_label: Preferred location
+    scope: application
+  - match: [previously, employed]
+    profile_label: Previously employed by this company?
+    scope: employer
+  - match: [currently, enrolled]
+    profile_label: Currently enrolled in a degree program?
+    scope: person
+  - match: [authorized, work]
+    profile_label: Authorized to work in this country?
+    scope: country

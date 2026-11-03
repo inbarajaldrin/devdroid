@@ -1,0 +1,15 @@
+# Source classification for the agent to adapt; the core scanner reads companies.yml.
+# No source here enables automation or chooses the person's interests.
+platforms:
+  - name: Public community leads
+    method: manual-public-read
+    url: https://community.example.org/jobs
+    action: Resolve each lead to its company's HTTPS career site, then classify that site.
+  - name: Public company JSON
+    method: company-feed
+    url: https://careers.example.org/jobs.json
+    action: Add an explicit custom feed mapping to companies.yml after inspecting its schema.
+cadence:
+  company_feeds: daily
+  failed_scan_retry: next-hourly-wake
+approval_gate: The person approves every individual application before submit.

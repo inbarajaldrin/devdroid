@@ -1,0 +1,12 @@
+#!/usr/bin/env python3
+"""The public entrance; Python 3, standard library only."""
+import sys
+import signal
+sys.dont_write_bytecode = True
+from capturelib import main
+
+if __name__ == "__main__":
+    def interrupted(signum, frame):
+        raise KeyboardInterrupt
+    signal.signal(signal.SIGTERM, interrupted)
+    main()

@@ -1,0 +1,15 @@
+{
+  "id": "exampleco--software-intern--20270115",
+  "company": "ExampleCo",
+  "title": "Software Intern",
+  "url": "https://jobs.example.com/software-intern",
+  "status": "enriched",
+  "first_seen": "2027-01-15",
+  "location": "Example City, CA",
+  "ruling": {"decision": null, "reason": null, "decided_at": null},
+  "posting": {"description": "Software internship building reliable tools with Python and Swift."},
+  "summary_ai": {"label": "Example summary", "text": "Synthetic test posting.", "fit": "adjacent", "fit_reasons": [], "flags": []},
+  "company_info": {"label": "Example company", "text": "Synthetic test data.", "careers_url": "https://jobs.example.com", "logo": null, "images": []},
+  "materials": {"application_dir": "applications/exampleco/2027-01_software-intern"},
+  "history": []
+}
