@@ -1,6 +1,5 @@
 {
   "name": "session-tools",
-  "version": "0.1.0",
   "description": "Agents working together: message any Claude Code session or Codex thread, delegate work or ask for a review, search past sessions, fork one, and hand work over.",
   "author": {
     "name": "Aldrin Inbaraj"

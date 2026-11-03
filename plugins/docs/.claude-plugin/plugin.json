@@ -1,7 +1,6 @@
 {
   "$schema": "https://anthropic.com/claude-code/plugin.schema.json",
   "name": "docs",
-  "version": "0.1.0",
   "description": "Help building for Apple platforms and Windows, working from their current documentation.",
   "author": {
     "name": "Aldrin Inbaraj"

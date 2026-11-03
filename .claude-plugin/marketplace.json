@@ -21,8 +21,7 @@
         "fork",
         "provenance",
         "search"
-      ],
-      "version": "0.1.0"
+      ]
     },
     {
       "name": "dev-tools",
@@ -35,8 +34,7 @@
         "commit-review",
         "detour",
         "skill-building"
-      ],
-      "version": "0.1.0"
+      ]
     },
     {
       "name": "utils",
@@ -48,8 +46,7 @@
         "screenshot",
         "window-capture",
         "recording"
-      ],
-      "version": "0.1.0"
+      ]
     },
     {
       "name": "docs",
@@ -66,29 +63,25 @@
         "windows",
         "dotnet",
         "live-fetch"
-      ],
-      "version": "0.1.0"
+      ]
     },
     {
       "name": "text",
       "source": "./plugins/text",
       "description": "Talk with your agents over WhatsApp: choose for each chat who answers and who may wake them, set each agent's role and the permissions it holds for the work you hand it, and give an agent temporary access to answer or work with anyone in your contacts.",
-      "category": "productivity",
-      "version": "0.1.0"
+      "category": "productivity"
     },
     {
       "name": "sign-in",
       "source": "./plugins/sign-in",
       "description": "Sign in to any website once to automate work there with your agent.",
-      "category": "productivity",
-      "version": "0.1.0"
+      "category": "productivity"
     },
     {
       "name": "career",
       "source": "./plugins/career",
       "description": "Find company jobs, fill and review applications with your approval, and track your search in your own app and website.",
-      "category": "productivity",
-      "version": "0.1.0"
+      "category": "productivity"
     }
   ]
 }

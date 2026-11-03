@@ -1,7 +1,6 @@
 {
   "$schema": "https://anthropic.com/claude-code/plugin.schema.json",
   "name": "dev-tools",
-  "version": "0.1.0",
   "description": "Tools for building software with agents, from reviewing a change to checking it before you commit.",
   "author": {
     "name": "Aldrin Inbaraj"
