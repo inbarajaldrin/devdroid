@@ -21,6 +21,8 @@ ruling setup.google --value no
 ruling setup.google --value yes
 ruling setup.google --value ask
 google opt-in ACCOUNT
+open ACCOUNT --site google
+sign-in-status ACCOUNT --site google
 google console ACCOUNT --step project
 google console ACCOUNT --finish
 google project ACCOUNT --project YOUR_OWN_PROJECT
@@ -32,15 +34,42 @@ google console ACCOUNT --step desktop
 google console ACCOUNT --finish
 google console ACCOUNT --step production
 google console ACCOUNT --finish
-google project ACCOUNT --project YOUR_OWN_PROJECT --client-file /private/download.json
+google project ACCOUNT --project YOUR_OWN_PROJECT --client-file /private/download.json --audience production
 google connect ACCOUNT --service calendar --api calendar-json.googleapis.com --scope https://www.googleapis.com/auth/calendar.events.readonly
+google connect ACCOUNT --service gmail --api gmail.googleapis.com --scope https://www.googleapis.com/auth/gmail.readonly
+google connect ACCOUNT --service gmail --api gmail.googleapis.com --scope https://www.googleapis.com/auth/gmail.compose
 google check ACCOUNT --service calendar
 google read ACCOUNT --service calendar -- events list --params '{"calendarId":"primary"}'
+google email ACCOUNT --action draft --to recipient@example.com --subject 'Subject' --body-file /private/tmp/message.txt
+google email ACCOUNT --action send --to recipient@example.com --subject 'Subject' --body-file /private/tmp/message.txt --confirm-send
 permission ACCOUNT --via google --site calendar --action edit --resource primary
 grant ACCOUNT --via google --site calendar --action edit --resource primary
 ruling instructions.ACCOUNT.calendar --value no
 propose ACCOUNT --via google --site calendar
 ```
+
+For Gmail writes, use a private UTF-8 body file with mode `0600` (maximum 1 MiB).
+The user must explicitly request sending the exact message; show recipient, subject
+and full body in chat before calling the send command. A draft request only creates
+a draft. The command reports an unresolved outcome rather than retrying a send that
+may already have reached Gmail. See the [Google Workspace setup guide](../../../../../docs/google-workspace-setup.md).
+
+`google opt-in` also registers a Google identity check in the account's existing
+browser profile. Open the `google` site and sign in there before starting Console
+setup. The recorded Google email must match the email chosen during opt-in.
+
+For a personal project that remains in Google's Testing audience, the person first
+adds the intended Google account as a test user. They then import the Desktop
+client with `google project ACCOUNT --project YOUR_OWN_PROJECT --client-file
+/private/download.json --audience testing`. This records Testing honestly instead
+of asserting Production. Google authorization for scopes beyond basic identity can
+expire after seven days; check and reconnect when needed. Production remains the
+durable choice and requires Google's published-app requirements. The person must
+confirm the actual audience in their terminal; agents do not publish or add users.
+
+For an end-to-end setup walkthrough, including the Desktop client, Testing audience,
+Gmail scopes and browser handoff troubleshooting, see the repository's
+[Google Workspace setup guide](../../../../../docs/google-workspace-setup.md).
 
 # Saved rulings and changes
 
@@ -51,7 +80,7 @@ agent-authored file cannot manufacture the person's answers.
 
 A record has `{value, at}`; service choices also bind `api` and `scopes`.
 Keys include `setup.sites`, `setup.google`, `person`, `email.ACCOUNT`,
-`project.PERSON`, `production.PERSON`, `service.ACCOUNT.SERVICE`,
+`project.PERSON`, `production.PERSON`, `testing.PERSON`, `service.ACCOUNT.SERVICE`,
 `scope.ACCOUNT.SERVICE`, `blocked.ACCOUNT` and `instructions.ACCOUNT.WORD`.
 Exact standing-grant decisions use `grant.ACCOUNT.<scope hash>`; the grant command
 returns the key. No / ask grants nothing. Affirmative words start with `I allow `.
@@ -92,7 +121,7 @@ person changes that ruling. Revoke without a service disables Google control.
 These are local changes: they do not revoke consent on Google's servers. The person
 can revoke Google consent separately. Rulings preserve unknown facts for future
 interviews; changing a publishing or ownership fact does not mutate Cloud Console.
-Removing the Production attestation stops API use until the person confirms it again
+Removing the active audience attestation stops API use until the person confirms it again
 through `google project --client-file`; the previous timestamp cannot recreate it.
 To move projects, disable all affected Google connections, change the person's
 project ruling, record the new project and rotate to its private Desktop client.
@@ -108,6 +137,9 @@ ambiguous or unsupported account controls refuse.
 
 The person creates an initial project in their own window. The project step cannot
 mutate before the login identity is recorded and refuses a second project once one is recorded.
+If Google redirects the project page, the tool shows that page as an unverified
+human handoff without reading its contents. The person checks the account and
+creates the project there, then finishes the handoff.
 Project-specific steps require the recorded project on the page, plus the intended
 authuser. The agent uses supported accessible names, never coordinates. A different
 project, account, private authorization URL or unknown wizard path refuses.
@@ -177,7 +209,7 @@ later attempt refuses until the person reviews the page and changes that ruling.
 A Service Usage Consumer quota-project failure is distinct; the person reviews that exact IAM role rather
 than granting Owner/Editor. Production removes the External Testing seven-day limit,
 not revocation, inactivity, verification or Workspace policy. Identity-only scopes
-have a Testing exception. Production and ownership are human attestations.
+have a Testing exception. Audience status and ownership are human attestations.
 
 Each account has its own plugin-owned HOME/config/key/cache under
 `~/.devdroid/browser/google/accounts/<source+account+holder hash>/`, even a default

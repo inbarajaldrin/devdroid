@@ -170,7 +170,14 @@ export async function command(accountsFile, cmd, name, {leaseLocked=false}={}) {
     if(result.adopted){const start=processStart(result.pid);insist(start&&await profilePid(a.bridge.profileDir,run,a.bridge.port)===result.pid,'BRIDGE_OWNERSHIP_UNKNOWN','Adopted bridge could not be positively identified');atomicJSON(path.join(HOME,'owned',name+'.json'),{pid:result.pid,start,profile:a.bridge.profileDir,port:a.bridge.port});}
     await recordContext(accountsFile,name,result.contextId);return result;
   });}
-  if (cmd === 'show') return show(a.bridge.port);
+  if (cmd === 'show') {
+    const result = await show(a.bridge.port);
+    if (process.platform === 'darwin') {
+      const app = path.dirname(path.dirname(path.dirname(binary())));
+      await run('open', ['-a', app], { timeout: 10000 });
+    }
+    return result;
+  }
   if (cmd === 'park') return park(a.bridge.port);
   if (cmd === 'wake') {const result=await wake(a.bridge.port);if(a.bridge.offscreen)await park(a.bridge.port);return result;}
   if(cmd==='bridge-down'){

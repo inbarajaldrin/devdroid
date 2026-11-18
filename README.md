@@ -32,6 +32,9 @@ codex plugin add utils@devdroid
 
 ## Plugins and their skills
 
+For a walkthrough of Google Workspace OAuth setup, scopes, and troubleshooting, see
+[the Google Workspace setup guide](docs/google-workspace-setup.md).
+
 **session-tools**
 
 | Skill | What it does |

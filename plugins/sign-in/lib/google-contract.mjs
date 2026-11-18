@@ -10,24 +10,26 @@ const fields = (o, allowed) => insist(o && !Array.isArray(o) && Object.keys(o).e
 export function validateRulings(rulings={}) {
  insist(rulings&&typeof rulings==='object'&&!Array.isArray(rulings),'RULINGS_FORMAT','Expected saved rulings');
  for(const [key,r]of Object.entries(rulings)){
-  insist(/^(setup\.(sites|google)|person|(email|project|production|blocked)\.[a-z][a-z0-9-]*|(service|scope|instructions)\.[a-z][a-z0-9-]*\.[a-z][a-z0-9-]*|grant\.[a-z][a-z0-9-]*\.[a-f0-9]{64})$/.test(key)&&r&&Object.keys(r).every(k=>['value','at','api','scopes'].includes(k))&&Number.isFinite(Date.parse(r.at)),'RULINGS_FORMAT','Invalid saved ruling');
+  insist(/^(setup\.(sites|google)|person|(email|project|production|testing|blocked)\.[a-z][a-z0-9-]*|(service|scope|instructions)\.[a-z][a-z0-9-]*\.[a-z][a-z0-9-]*|grant\.[a-z][a-z0-9-]*\.[a-f0-9]{64})$/.test(key)&&r&&Object.keys(r).every(k=>['value','at','api','scopes'].includes(k))&&Number.isFinite(Date.parse(r.at)),'RULINGS_FORMAT','Invalid saved ruling');
   let valid;
   if(key==='setup.sites')valid=r.value==='ask'||Array.isArray(r.value)&&r.value.every(slug)&&new Set(r.value).size===r.value.length;
   else if(key==='person')valid=slug(r.value);
   else if(key.startsWith('email.'))valid=email(r.value);
-  else if(key.startsWith('project.')||key.startsWith('production.'))valid=projectID(r.value);
+  else if(key.startsWith('project.')||key.startsWith('production.')||key.startsWith('testing.'))valid=projectID(r.value);
   else if(key.startsWith('blocked.'))valid=['admin','unknown','clear'].includes(r.value);
   else valid=['yes','no','ask'].includes(r.value);
   insist(valid&&(!r.scopes||Array.isArray(r.scopes)&&r.scopes.every(exactScope))&&(!r.api||/^[a-z][a-z0-9-]*\.googleapis\.com$/.test(r.api)),'RULINGS_FORMAT','Invalid ruling value or scoped choice');
  }
 }
 export function validateGoogle(g) {
-  fields(g, ['person','expectedEmail','optIn','project','productionConfirmedAt','services']);
+  fields(g, ['person','expectedEmail','optIn','project','productionConfirmedAt','testingConfirmedAt','services']);
   insist(slug(g.person) && email(g.expectedEmail), 'GOOGLE_FORMAT', 'Google needs a person key and expected account email');
   fields(g.optIn, ['userWords','at']);
   insist(typeof g.optIn.userWords === 'string' && g.optIn.userWords.trim() && g.optIn.userWords.length <= 500 && Number.isFinite(Date.parse(g.optIn.at)), 'GOOGLE_FORMAT', 'Record the person’s opt-in words and date');
   insist(!g.project || projectID(g.project), 'GOOGLE_FORMAT', 'Invalid project ID');
   insist(!g.productionConfirmedAt || g.project && Number.isFinite(Date.parse(g.productionConfirmedAt)), 'GOOGLE_FORMAT', 'Production confirmation needs a project and date');
+  insist(!g.testingConfirmedAt || g.project && Number.isFinite(Date.parse(g.testingConfirmedAt)), 'GOOGLE_FORMAT', 'Testing confirmation needs a project and date');
+  insist(!(g.productionConfirmedAt&&g.testingConfirmedAt),'GOOGLE_FORMAT','One audience status may be confirmed at a time');
   insist(g.services && typeof g.services === 'object' && !Array.isArray(g.services), 'GOOGLE_FORMAT', 'Google services must be keyed by one-word name');
   for (const [key,s] of Object.entries(g.services)) {
     fields(s, ['api','scopes','connectedAt']);

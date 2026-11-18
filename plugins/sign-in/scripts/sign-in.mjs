@@ -12,6 +12,7 @@ import {identityAssurance} from '../browser/identity.mjs';
 import { migrate } from '../lib/migrate.mjs';
 import { setupInterview,scopeDenied } from '../lib/google-contract.mjs';
 import {setupChoices,remember} from '../lib/rulings.mjs';
+const needsSplit=a=>Object.keys(a.sites).filter(site=>!(site==='google'&&a.google&&a.sites.google.identity?.kind==='google')).length>1;
 export const HELP=`sign-in [--accounts FILE] [--on-holder EXPECTED_ID] COMMAND
   machine
   migrate --registry FILE [--identities FILE] [--sites-from FILE] [--private-machine]
@@ -31,17 +32,19 @@ export const HELP=`sign-in [--accounts FILE] [--on-holder EXPECTED_ID] COMMAND
     Saves each human answer once before installing. Answers are choices, not grants.
   google explain
   google opt-in ACCOUNT (human terminal; can be added after setup)
-  google project ACCOUNT --project OWN_PROJECT [--client-file PRIVATE_DOWNLOAD] (human)
+    Then open ACCOUNT --site google to verify the intended Google identity.
+  google project ACCOUNT --project OWN_PROJECT [--client-file PRIVATE_DOWNLOAD --audience production|testing] (human)
   google console ACCOUNT --step project|api|consent|desktop|production|iam [--api API]
     [--field ACCESSIBLE_NAME --value TEXT | --click ACCESSIBLE_NAME]
   google connect ACCOUNT --service WORD --api API --scope EXACT_SCOPE [--replace-scope OLD_SCOPE] (human)
   google check ACCOUNT --service WORD
   google read ACCOUNT --service WORD -- RESOURCE... get|list [--params JSON]
+  google email ACCOUNT --action draft|send --to ADDRESS --subject SUBJECT --body-file PRIVATE_FILE [--confirm-send]
   grant ACCOUNT ... --via google grants API actions, separately from browser actions.
   doctor
   accounts-upgrade
   ruling KEY [--value ANSWER] [--remove] (human terminal; yes/no/ask or a fact)
-  google change ACCOUNT [--email EMAIL | --client-file PRIVATE_DOWNLOAD | --block admin|unknown|clear]
+  google change ACCOUNT [--email EMAIL | --client-file PRIVATE_DOWNLOAD [--audience production|testing] | --block admin|unknown|clear]
   google revoke ACCOUNT [--service WORD [--scope SCOPE | --action ACTION --resource EXACT_RESOURCE]]
   google sync ACCOUNT (controller: copy nonsecret metadata from its proven holder)
   google console ACCOUNT --finish (human: complete handoff and park)
@@ -57,16 +60,16 @@ export function parse(argv){
     'sign-in-status':[1,['site']],'cancel-sign-in':[1,['site']],drive:[1,['site','policy']],show:[1,[]],park:[1,[]],wake:[1,[]],'bridge-down':[1,[]],
     create:[1,['from']],'add-site':[-1,['site','origin','private-machine']],split:[1,['keep','names']],grant:[1,['site','action','resource','via']],revoke:[1,['site','action','resource','via']],enroll:[1,['site']],propose:[1,['site','via']],permission:[1,['site','action','resource','via']],setup:[0,['accounts-from','sites','google']],doctor:[0,[]],
     'accounts-upgrade':[0,[]],ruling:[1,['value','remove']],
-    google:[args[0]==='explain'?1:2,['service','api','scope','replace-scope','project','client-file','step','field','value','click','expect','email','block','action','resource','finish']],
+    google:[args[0]==='explain'?1:2,['service','api','scope','replace-scope','project','client-file','audience','step','field','value','click','expect','email','block','action','resource','finish','to','subject','body-file','confirm-send']],
   };
   insist(definitions[cmd],'USAGE',HELP);const [count,allowed]=definitions[cmd],values=[],options={};let rest=[];
   while(args.length){const item=args.shift();if(item==='--'){insist(cmd==='drive'||cmd==='google','USAGE','Only drive and google read take trailing arguments');rest=args.splice(0);break;}
-    if(item.startsWith('--')){const key=item.slice(2);insist(allowed.includes(key)&&!Object.hasOwn(options,key),'USAGE','Unknown or duplicate option');if(['approve','private-machine','inspect-only','remove','finish'].includes(key))options[key]=true;else{const v=args.shift();insist(v&&!v.startsWith('--'),'USAGE','Option needs a value');options[key]=v;}}
+    if(item.startsWith('--')){const key=item.slice(2);insist(allowed.includes(key)&&!Object.hasOwn(options,key),'USAGE','Unknown or duplicate option');if(['approve','private-machine','inspect-only','remove','finish','confirm-send'].includes(key))options[key]=true;else{const v=args.shift();insist(v&&!v.startsWith('--'),'USAGE','Option needs a value');options[key]=v;}}
     else values.push(item);
   }
   insist(count===-1?values.length<=1:values.length===count,'USAGE',HELP);
   if(cmd==='google'){
-    const allowedRoutes={explain:[], 'opt-in':[],project:['project','client-file'],console:['step','api','field','value','click','expect','finish'],connect:['service','api','scope','replace-scope'],check:['service','expect'],read:['service','expect'],change:['email','client-file','block'],revoke:['service','scope','action','resource'],metadata:[],sync:[]};
+    const allowedRoutes={explain:[], 'opt-in':[],project:['project','client-file','audience'],console:['step','api','field','value','click','expect','finish'],connect:['service','api','scope','replace-scope'],check:['service','expect'],read:['service','expect'],email:['action','to','subject','body-file','confirm-send'],change:['email','client-file','audience','block'],revoke:['service','scope','action','resource'],metadata:[],sync:[]};
     insist(Object.hasOwn(allowedRoutes,values[0])&&Object.keys(options).every(k=>allowedRoutes[values[0]].includes(k))&&(!rest.length||values[0]==='read'),'USAGE','Unknown Google route or option');
   }
   return {cmd,file:accountsPath(file),name:cmd==='google'?values[1]:values[0],route:cmd==='google'?values[0]:undefined,options,onHolder,rest};
@@ -91,7 +94,7 @@ async function dispatch(argv){
     return (await import('../lib/setup.mjs')).doctor(file);
   }
   if(cmd==='google'&&route==='explain')return (await import('../lib/google.mjs')).explanation;
-  if(cmd==='accounts-upgrade')return locked(file,()=>{const data=load(file);atomicJSON(file,data);return {upgraded:true,accounts:Object.keys(data.accounts),rulingsSaved:true,profilesMoved:false,needsSplit:Object.entries(data.accounts).filter(([,a])=>Object.keys(a.sites).length>1).map(([account])=>({account,command:`split ${account} --keep SITE`}))};});
+  if(cmd==='accounts-upgrade')return locked(file,()=>{const data=load(file);atomicJSON(file,data);return {upgraded:true,accounts:Object.keys(data.accounts),rulingsSaved:true,profilesMoved:false,needsSplit:Object.entries(data.accounts).filter(([,a])=>needsSplit(a)).map(([account])=>({account,command:`split ${account} --keep SITE`}))};});
   if(cmd==='ruling'&&!o.value&&!o.remove&&fs.existsSync(file)){const records=load(file).rulings;if(Object.hasOwn(records,name))return {ruling:name,record:records[name]};}
   if(cmd==='ruling')return human(async ask=>{
     const parts=name.split('.'),d=fs.existsSync(file)?load(file):null;
@@ -105,7 +108,7 @@ async function dispatch(argv){
   if(cmd==='add-site')return addSite(file,name,o.site,o.origin,{exclusive:!!o['private-machine']});
   if(cmd==='split')return splitAccount(file,name,{keep:o.keep,names:o.names?read(path.resolve(o.names)):{}});
   const data=load(file);
-  if(cmd==='list')return Object.entries(data.accounts).map(([account,a])=>({account,machine:a.machine.id,driveBlocked:!!a.bridge.driveBlocked,primary:a.primary,legacyMultiSite:Object.keys(a.sites).length>1,...(Object.keys(a.sites).length>1?{splitCommand:`split ${account} --keep SITE`}:{}),sites:Object.entries(a.sites).map(([site,s])=>({site,probe:!!s.identity,probeKind:s.identity?.kind||null,...identityAssurance(s.identity),identityRecorded:!!s.identity?.recordedAt,identityEnrolled:s.identity?.kind!=='generic'&&!!s.identity&&Object.keys(s.identity.expected||{}).some(k=>!['authenticated','site'].includes(k)),...(s.identity?.kind==='generic'?{markerEnrolled:!!s.identity.expected?.marker}:{})})),...(a.google?{google:{person:a.google.person,identity:a.google.expectedEmail,project:a.google.project,services:a.google.services}}:{}),permissions:a.permissions}));
+  if(cmd==='list')return Object.entries(data.accounts).map(([account,a])=>({account,machine:a.machine.id,driveBlocked:!!a.bridge.driveBlocked,primary:a.primary,legacyMultiSite:needsSplit(a),...(needsSplit(a)?{splitCommand:`split ${account} --keep SITE`}:{}),sites:Object.entries(a.sites).map(([site,s])=>({site,probe:!!s.identity,probeKind:s.identity?.kind||null,...identityAssurance(s.identity),identityRecorded:!!s.identity?.recordedAt,identityEnrolled:s.identity?.kind!=='generic'&&!!s.identity&&Object.keys(s.identity.expected||{}).some(k=>!['authenticated','site'].includes(k)),...(s.identity?.kind==='generic'?{markerEnrolled:!!s.identity.expected?.marker}:{})})),...(a.google?{google:{person:a.google.person,identity:a.google.expectedEmail,project:a.google.project,services:a.google.services}}:{}),permissions:a.permissions}));
   if(cmd==='overview')return (await import('../browser/ext-bridge.mjs')).command(file,'state');
   if(cmd==='bridge-up-all'){const result=[];for(const [login,a]of Object.entries(data.accounts))if(local(a.machine))result.push(await main(['--accounts',file,'bridge',login]));return result;}
   const a=accountAt(data,name);insist(!onHolder||(local(a.machine)&&machineId()===onHolder),'WRONG_MACHINE','Delegated command reached the wrong stable machine; correct SSH routing');
@@ -115,12 +118,23 @@ async function dispatch(argv){
     insist(!o.expect||/^[a-f0-9]{64}$/.test(o.expect)&&o.expect===expected,'GOOGLE_REMOTE_CONTRACT','Controller and holder disagree about the Google account, project or scopes; no operation was performed');
     const reply=result=>o.expect?{googleContract:expected,result}:result;
     if(route==='opt-in')return human(ask=>g.optIn(file,name,{ask}));
-    if(route==='project')return human(ask=>g.configureProject(file,name,a,{project:o.project,clientFile:o['client-file'],ask}));
+    if(route==='project')return human(ask=>g.configureProject(file,name,a,{project:o.project,clientFile:o['client-file'],audience:o.audience,ask}));
     if(route==='metadata')return g.googleMetadata(file,name,a);
     if(route==='sync')return g.syncGoogle(file,name,a);
     if(route==='console'&&o.finish)return human(async()=>{insist(local(a.machine),'HUMAN_STEP_ON_HOLDER','Finish on the holder');return (await import('../lib/human-lease.mjs')).finishHuman(file,name,a);});
     if(route==='console')return reply(await g.consoleStep(file,name,a,o));
     if(route==='connect')return human(ask=>g.connect(file,name,a,o,{ask}));
+    if(route==='email'){
+      insist(o.action==='draft'||o.action==='send','USAGE','Choose --action draft or send');
+      insist(o.action!=='send'||o['confirm-send'],'EMAIL_SEND_CONFIRMATION','Sending requires a direct user request for this message and --confirm-send');
+      insist(o.action==='send'||!o['confirm-send'],'USAGE','--confirm-send is only valid with --action send');
+      insist(o.to&&o.subject&&o['body-file'],'USAGE','Supply --to, --subject, and --body-file');
+      const stat=fs.lstatSync(path.resolve(o['body-file']));
+      insist(stat.isFile()&&!stat.isSymbolicLink()&&(stat.mode&0o077)===0&&stat.size<=1024*1024,'EMAIL_BODY_FILE','Use a regular file with private permissions no larger than 1 MiB');
+      const bytes=fs.readFileSync(path.resolve(o['body-file'])),body=bytes.toString('utf8');
+      insist(Buffer.from(body,'utf8').equals(bytes),'EMAIL_BODY_FILE','Email body file must contain valid UTF-8 text');
+      return g.emailGoogle(file,name,a,{action:o.action,to:o.to,subject:o.subject,body,confirmSend:!!o['confirm-send']});
+    }
     if(['check','read'].includes(route)){const operation=ask=>route==='check'?g.checkGoogle(file,name,a,o.service,{ask}):g.readGoogle(file,name,a,o.service,rest,{ask});const asks=['setup.google',`service.${name}.${o.service}`,`scope.${name}.${o.service}`].some(k=>data.rulings[k]?.value==='ask'||!data.rulings[k]&&!k.startsWith('scope.'));return reply(await (asks?human(operation):operation()));}
     if(route==='change')return human(ask=>g.changeGoogle(file,name,o,{ask}));
     if(route==='revoke')return human(()=>g.revokeGoogle(file,name,o));

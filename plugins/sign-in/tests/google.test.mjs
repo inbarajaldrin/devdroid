@@ -37,11 +37,20 @@ test('setup interview offers sites and API up front, one question at a time, wit
 });
 test('only the human opt-in records their words; the account format rejects secrets, invalid scope syntax and project conflicts',async t=>{
   const {file,a,dir}=config(t),answers=['yes','sample-person','sample@example.invalid'];
-  await optIn(file,'work',{ask:async()=>answers.shift(),guard:async()=>{}});assert.equal(read(file).accounts.work.google.optIn.userWords,'yes');
+  const result=await optIn(file,'work',{ask:async()=>answers.shift(),guard:async()=>{}});assert.equal(read(file).accounts.work.google.optIn.userWords,'yes');
+  assert.equal(result.next,'open work --site google');
+  const googleSite=read(file).accounts.work.sites.google;
+  assert.deepEqual(googleSite,{signInUrl:'https://accounts.google.com/',identity:{kind:'google',url:'https://myaccount.google.com/',expected:{name:'sample@example.invalid'}}});
+  assert.equal((await main(['--accounts',file,'list']))[0].legacyMultiSite,false);
+  assert.equal((await optIn(file,'work',{ask:yes,guard:async()=>{}})).reused,true);
+  assert.deepEqual(read(file).accounts.work.sites.google,googleSite);
   const data=read(file);data.accounts.work.google.token='secret';assert.throws(()=>validate(data),{code:'GOOGLE_FORMAT'});delete data.accounts.work.google.token;
   const g=metadata();g.services.calendar={api:'calendar-json.googleapis.com',scopes:['--full']};data.accounts.work.google=g;assert.throws(()=>validate(data),{code:'GOOGLE_FORMAT'});
   data.accounts.work.google=metadata();const b=account(dir,'other');b.google={...metadata(),expectedEmail:'second@example.invalid',project:'a-different-project'};data.accounts.other=b;assert.throws(()=>validate(data),{code:'GOOGLE_CONFLICT'});
   const no=config(t);await assert.rejects(optIn(no.file,'work',{ask:async()=>'',guard:async()=>{}}),{code:'RULING_REQUIRED'});assert.equal(read(no.file).accounts.work.google,undefined);
+  const conflict=config(t);conflict.a.sites.google={signInUrl:'https://accounts.google.com/',identity:{kind:'google',url:'https://myaccount.google.com/',expected:{name:'someone-else@example.invalid'}}};atomicJSON(conflict.file,{version:1,accounts:{work:conflict.a}});
+  const conflictAnswers=['yes','sample-person','sample@example.invalid'];await assert.rejects(optIn(conflict.file,'work',{ask:async()=>conflictAnswers.shift(),guard:async()=>{}}),{code:'GOOGLE_BROWSER_IDENTITY'});
+  assert.equal(read(conflict.file).accounts.work.google,undefined);
 });
 test('Google and browser permissions stay separate; omitted resource never widens API grants; proposed word is not written',async t=>{
   const {file,a}=fixture(t,{connected:true});
@@ -63,6 +72,16 @@ test('Desktop client is explicit, private, person owned and never imported from 
   payload.web=payload.installed;fs.writeFileSync(client,JSON.stringify(payload));await assert.rejects(configureProject(f.file,'work',a,{project:a.google.project,clientFile:client,ask:yes},{root:f.dir,guard:async()=>{}}),{code:'GOOGLE_DESKTOP_CLIENT'});delete payload.web;fs.writeFileSync(client,JSON.stringify(payload));
   const result=await configureProject(f.file,'work',a,{project:a.google.project,clientFile:client,ask:yes},{root:f.dir,guard:async()=>{}});assert.equal(JSON.stringify(result).includes('synthetic-secret'),false);
   const dest=path.join(googleHome(f.file,'work',a,f.dir),'.config/gws/client_secret.json');assert.equal(fs.statSync(dest).mode&0o777,0o600);assert.equal(read(dest).installed.project_id,a.google.project);
+});
+test('Testing audience is recorded honestly and permits a test-user connection',async t=>{
+  const f=fixture(t);delete f.a.google.productionConfirmedAt;atomicJSON(f.file,{version:1,accounts:{work:f.a}});
+  const client=path.join(f.dir,'testing-download.json');fs.writeFileSync(client,JSON.stringify({installed:{client_id:'synthetic.apps.googleusercontent.com',client_secret:'synthetic-secret',project_id:'sample-owned-project',auth_uri:'https://accounts.google.com/o/oauth2/auth',token_uri:'https://oauth2.googleapis.com/token'}}),{mode:0o600});
+  const imported=await configureProject(f.file,'work',f.a,{project:'sample-owned-project',clientFile:client,audience:'testing',ask:yes},{root:f.dir,guard:async()=>{}});
+  assert.equal(imported.audience,'testing');assert.equal(read(f.file).rulings['testing.sample-person'].value,'sample-owned-project');
+  assert.equal(read(f.file).rulings['production.sample-person'],undefined);assert.equal(read(f.file).accounts.work.google.productionConfirmedAt,undefined);
+  f.a=read(f.file).accounts.work;const {deps}=connectionDeps(f);
+  const connected=await connect(f.file,'work',f.a,{service:'calendar',api:'calendar-json.googleapis.com',scope},deps);
+  assert.equal(connected.status,'signed-in');assert.ok(read(f.file).accounts.work.google.services.calendar.connectedAt);
 });
 test('isolated homes and environment never seed user config, tokens, keys, proxies or ADC',t=>{
   const f=fixture(t),home=googleHome(f.file,'work',f.a,f.dir),other=googleHome(f.file,'other',f.a,f.dir);assert.notEqual(home,other);
@@ -127,6 +146,7 @@ test('connect preserves the human tab until callback, resets only owned stale ca
   const f=fixture(t),{deps,calls,configDir}=connectionDeps(f);fs.writeFileSync(path.join(configDir,'token_cache.json'),'old scopes and fake token',{mode:0o600});
   deps.execute=async()=>{assert.equal(fs.existsSync(path.join(configDir,'token_cache.json')),false);assert.equal(calls.some(c=>c.callback),true);return {stdout:JSON.stringify(report())};};
   const result=await connect(f.file,'work',f.a,{service:'calendar',api:'calendar-json.googleapis.com',scope},deps);assert.equal(result.status,'signed-in');assert.equal(read(f.file).accounts.work.google.services.calendar.scopes[0],scope);
+  assert.ok(calls.some(c=>Array.isArray(c)&&c.includes('--window')&&c.includes('foreground')));
   assert.equal(calls.filter(c=>Array.isArray(c)&&c.at(-1)==='close').length,1);assert.deepEqual(calls.filter(c=>c.window).map(c=>c.window),['show','park']);assert.equal(fs.readdirSync(configDir).filter(v=>v.startsWith('token_cache.json.before-')).length,1);
   assert.equal(JSON.stringify(result).includes('private OAuth'),false);
 });
@@ -139,6 +159,7 @@ test('console adapter uses the verified account, named elements, and stops at hu
   const f=fixture(t),calls=[];let location;const deps={root:f.dir,launch:async()=>{},handoff:async()=>{},guard:async()=>{},check:async()=>({contextId:'proved-context'}),navigate:async(a,args,url,ctx)=>{location=url;calls.push({url,ctx});},oc:async(a,args,ctx)=>{calls.push({args,ctx});return args.includes('get')?location:{url:location,snapshot:'fake console state'};}};
   const state=await consoleStep(f.file,'work',f.a,{step:'api',api:'calendar-json.googleapis.com'},deps);assert.equal(state.content.trust,'untrusted');assert.equal(state.content.data.snapshot,'fake console state');assert.equal(calls[0].ctx,'proved-context');
   await consoleStep(f.file,'work',f.a,{step:'consent'},deps);
+  assert.ok(calls.some(c=>Array.isArray(c.args)&&c.args.includes('--window')&&c.args.includes('foreground')));
   await (await import('../lib/human-lease.mjs')).finishHuman(f.file,'work',f.a,f.dir,{park:async()=>{}});
   await consoleStep(f.file,'work',f.a,{step:'consent',field:'App name',value:'my-access'},deps);assert.ok(calls.some(c=>c.args?.includes('--name')&&c.args?.includes('App name')));
   for(const step of ['production','iam','desktop'])await assert.rejects(consoleStep(f.file,'work',f.a,{step,click:step==='desktop'?'Download JSON':'Confirm'},deps),{code:'GOOGLE_HUMAN_GATE'});
@@ -147,6 +168,22 @@ test('console adapter uses the verified account, named elements, and stops at hu
   const desktop=await consoleStep(f.file,'work',f.a,{step:'desktop'},deps);assert.equal(desktop.state,undefined);
   await (await import('../lib/human-lease.mjs')).finishHuman(f.file,'work',f.a,f.dir,{park:async()=>{}});
   await consoleStep(f.file,'work',f.a,{step:'consent'},deps);await (await import('../lib/human-lease.mjs')).finishHuman(f.file,'work',f.a,f.dir,{park:async()=>{}});location=location.replace('sample-owned-project','another-project');await assert.rejects(consoleStep(f.file,'work',f.a,{step:'consent',field:'App name',value:'my-access'},deps),{code:'GOOGLE_CONSOLE_LOCATION'});
+});
+test('Google project redirects to another account become a human handoff without reading or changing Console data',async t=>{
+  const f=fixture(t);delete f.a.google.project;delete f.a.google.productionConfirmedAt;atomicJSON(f.file,{version:1,accounts:{work:f.a}});
+  let shown=0,handedOff=0,reads=0;const location='https://console.cloud.google.com/projectcreate?authuser=1&pli=1';
+  const result=await consoleStep(f.file,'work',f.a,{step:'project'},{root:f.dir,guard:async()=>{},check:async()=>({contextId:'proved-context'}),navigate:async()=>{},launch:async()=>{shown++;},handoff:async()=>{handedOff++;},oc:async(a,args)=>{if(args.includes('get'))return location;reads++;throw Error('Console content must stay private');}});
+  assert.equal(result.unverifiedLocation,true);assert.equal(shown,1);assert.equal(handedOff,1);assert.equal(reads,0);assert.equal(read(f.file).accounts.work.google.project,undefined);
+});
+test('Console accepts Googles index for the verified default account',async t=>{
+  const f=fixture(t);let location;
+  const result=await consoleStep(f.file,'work',f.a,{step:'api',api:'calendar-json.googleapis.com'},{root:f.dir,guard:async()=>{},check:async()=>({contextId:'proved-context'}),navigate:async(a,args,url)=>{location=url.replace(encodeURIComponent(f.a.google.expectedEmail),'0')+'&pli=1';},oc:async(a,args)=>args.includes('get')?location:{url:location}});
+  assert.equal(result.content.data.url,location);
+});
+test('a failed Console page summary preserves the human consent handoff',async t=>{
+  const f=fixture(t);let location,shown=0,handedOff=0;
+  const result=await consoleStep(f.file,'work',f.a,{step:'consent'},{root:f.dir,guard:async()=>{},check:async()=>({contextId:'proved-context'}),navigate:async(a,args,url)=>{location=url;},launch:async()=>{shown++;},handoff:async()=>{handedOff++;},oc:async(a,args)=>{if(args.includes('get'))return location;throw Error('Google page getter failed');}});
+  assert.equal(result.contentUnavailable,true);assert.equal(shown,1);assert.equal(handedOff,1);
 });
 test('API reads go through isolated gws after identity/scope proof and cannot enter auth or helper/write commands',async t=>{
   const f=fixture(t,{connected:true}),calls=[];const deps={root:f.dir,guard:async()=>{},install:async()=>'/fake/gws',execute:async(bin,args)=>{calls.push(args);return {stdout:JSON.stringify(args[0]==='auth'?report():{items:[]})};}};
